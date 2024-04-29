@@ -7,12 +7,21 @@ import pandas as pd
 from itertools import combinations
 import copy
 from BIGFAM import tools
-from BIGFAM.pedigree import rel_rx, dfs
+from BIGFAM.pedigree import dfs
 import importlib
-importlib.reload(rel_rx)
 importlib.reload(dfs)
 
 relationships = ['SB', 'PC', 'AV', 'GP', '1C', 'HSB', 'HAV', 'GG']
+
+dict_rel_rx = {
+    "son_father": ["SF", 0],
+    "son_mother": ["SM", 1/np.sqrt(2)],
+    "daughter_father": ["DF", 1/np.sqrt(2)],
+    "daughter_mother": ["DM", 1/2],
+    "son_brother": ["SB", 1/2],
+    "son_sister": ["SS_DB", 1/np.sqrt(8)],
+    "daughter_sister": ["DS", 3/4],
+}
 
 def shortest_list(list_of_lists):
     if not list_of_lists:
@@ -22,7 +31,6 @@ def shortest_list(list_of_lists):
         if len(item) < len(shortest):
             shortest = item
     return shortest
-
 
 def find_parents_with_sibling(df_ped: pd.DataFrame):
     return (df_ped.groupby(['father', 'mother'])
@@ -195,80 +203,10 @@ def df2graph(df_edges):
     
     return graph, idx_id
     
-def get_all_path(graph, start, end):
+def get_shortest_path(graph, start, end):
     
-    paths = dfs.dfs_recursive(copy.deepcopy(graph), start)
-    path_wanted = []
-    return paths
-    # # find path ends with end
-    # for path in paths:
-    #     if path[-1] == end:
-    #         path_wanted.append(path)
-            
-    # return the shortest path
-    # return shortest_list(path_wanted)
-
-# # DOR1 : ["PC", "SB"],
-# def get_rel_rx_dor1(
-#     df_ped: pd.DataFrame, 
-#     ids: list, 
-#     relationship: str
-#     ):
+    # paths = dfs.find_all_paths(copy.deepcopy(graph), start, end)
+    # return shortest_list(paths)
+    path = dfs.shortest_path(copy.deepcopy(graph), start, end)
+    return path
     
-#     # validate input data
-#     df_ped, ids, relationship = validate_input(
-#         df_ped=df_ped.copy(),
-#         ids=ids,
-#         relationship=relationship
-#     )
-    
-#     # compute relative and rx
-#     rel_type, rx = None, np.nan
-    
-#     if relationship == "PC":
-#         rel_type, rx = rel_rx.parent_offspring(df_ped, ids[0], ids[1])
-#         return rel_type, rx
-    
-#     elif relationship == "SB":
-#         rel_type, rx = rel_rx.sibling(df_ped, ids[0], ids[1])
-#         return rel_type, rx
-    
-#     else:
-#         raise Exception(
-#             f"'{relationship}' is not appropriate relationship name"
-#         )
-        
-# # DOR2 : ["AV", "GP", "HSB"],
-# def get_rel_rx_dor2(
-#     df_ped: pd.DataFrame, 
-#     ids: list, 
-#     relationship: str
-# ):
-#     # validate input data
-#     df_ped, ids, relationship = validate_input(
-#         df_ped=df_ped.copy(),
-#         ids=ids,
-#         relationship=relationship
-#     )
-    
-#     # compute relative and rx
-#     rel_type, rx = None, np.nan
-    
-#     if relationship == "AV":
-#         # rel_type, rx = rel_rx.avuncular(df_ped, ids[0], ids[1])
-#         return rel_type, rx
-        
-    
-#     elif relationship == "GP":
-#         return rel_type, rx
-    
-#     elif relationship == "HSB":
-#         rel_type, rx = rel_rx.half_sibling(df_ped, ids[0], ids[1])
-#         return rel_type, rx
-    
-#     else:
-#         raise Exception(
-#             f"'{relationship}' is not appropriate relationship name"
-#         )
-        
-# # DOR3 : ["1C", "HAV", "GG"],

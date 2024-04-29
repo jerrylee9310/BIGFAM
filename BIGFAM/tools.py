@@ -39,3 +39,42 @@ def check_columns(
                                  f"Expected one of {components}.")
     
     return df
+
+def get_unique_set(df, colns):
+    
+    return set(df[colns]
+               .apply(lambda x: "_".join(map(str, sorted(x))),
+                      axis=1))
+
+def remove_duplicate_relpair(df: pd.DataFrame, coln_set: set):
+    """
+    Removes duplicate relative pairs from a DataFrame.
+
+    This function identifies and removes rows representing duplicate 
+    column name sets.
+    
+    Args:
+        df (pd.DataFrame): The DataFrame containing relative pair information.
+        coln_set (set): A set of column names representing the relative information used for identifying duplicates.
+
+    Returns:
+        pd.DataFrame: The DataFrame with duplicate relative pairs removed.
+    """
+
+    df = df.copy()
+    df["set"] = (df[coln_set]
+                 .apply(lambda x: "_".join(map(str, sorted(x))),
+                        axis=1))
+    df = df.drop_duplicates(subset="set", keep="first").drop(columns="set")
+    
+    return df
+
+def flip_and_concat(df: pd.DataFrame, flip_colns: dict):
+    flipping_flip_colns = dict((v,k) for k,v in flip_colns.items())
+    flip_colns.update(flipping_flip_colns)
+    
+    
+    df_original = df.copy()
+    df_flipped = df.copy().rename(columns=flip_colns)
+    
+    return pd.concat([df_original, df_flipped], axis=0)

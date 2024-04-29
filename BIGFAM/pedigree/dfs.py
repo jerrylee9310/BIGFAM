@@ -1,38 +1,63 @@
-import copy
+from collections import deque
 
-def recurse(graph, start, answer, path, input_start):
+def find_all_paths(graph, start, end, visited=[], path=[]):
     """
-    https://sexy-developer.tistory.com/m/55
+    This function finds all paths from a start node to an end node in a graph using DFS.
+
+    Args:
+        graph: A list of lists representing the adjacency matrix of the graph.
+                graph[i][j] = 1 indicates an edge between node i and node j, 
+                otherwise 0.
+        start: The starting node.
+        end: The ending node.
+        visited: (internal use) Keeps track of visited nodes to avoid cycles.
+        path: (internal use) Stores the current path during exploration.
+
+    Returns:
+        None (paths are appended to the 'all_paths' list outside the function)
     """
+    visited.append(start)
     path.append(start)
-    cands = []
 
-    # 갈 수 있는 노드 찾기
-    for i in range(len(graph[start])):
-        if i != start and graph[start][i] == 1:
-            cands.append(i)
-
-    # 갈 수 있는 노드가 없다면, 현재까지의 path를 answer의 원소로 저장하고, return하는 것으로 종료
-    if not cands:
-        answer.append(copy.deepcopy(path))
-        return
-
-    # 갈 수 있는 노드가 있다면, 그 노드로 가는 경로에 해당하는 graph의 원소를 0으로 바꾸고, 재귀 호출
+    all_paths = []
+    if start == end:
+        # Found a path! Append it to the results
+        all_paths.append(path.copy())
     else:
-        while cands:
-            cand = cands.pop(0)
-            graph[start][cand] = 0
-            graph[cand][start] = 0
-            recurse(graph, cand, answer, path, input_start)
+        # Explore unvisited neighbors
+        for neighbor in range(len(graph[start])):
+            if graph[start][neighbor] == 1 and neighbor not in visited:
+                all_paths.extend(find_all_paths(graph, neighbor, end, visited.copy(), path.copy()))
 
-        # 반복이 끝났다는 것은 해당 노드에서 더이상 갈 수 있는 노드가 없다는 뜻. 따라서 path에서 pop한다.
-        path.pop()
+    # Backtrack (remove current node from visited and path)
+    visited.pop()
+    path.pop()
+    return all_paths
 
+def shortest_path(graph, start, end):
+    # Initialize a queue for BFS
+    queue = deque()
+    # Initialize a dictionary to store visited nodes and their parent node
+    visited = {start: None}
+    # Start BFS from the start node
+    queue.append(start)
 
-def dfs_recursive(graph, input_start):
-    path = []
-    answer = []
-    start = input_start
-    recurse(graph, start, answer, path, input_start)
+    # Perform BFS until the queue is empty
+    while queue:
+        node = queue.popleft()
+        # If we reach the end node, reconstruct the path and return it
+        if node == end:
+            path = []
+            while node is not None:
+                path.append(node)
+                node = visited[node]
+            return path[::-1]
 
-    return answer
+        # Explore neighbors of the current node
+        for neighbor, connected in enumerate(graph[node]):
+            if connected == 1 and neighbor not in visited:
+                visited[neighbor] = node
+                queue.append(neighbor)
+
+    # If no path is found
+    return None
