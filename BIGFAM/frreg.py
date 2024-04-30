@@ -101,6 +101,9 @@ def familial_relationship_regression_DOR(df, std_pheno=True):
 
 
 def familial_relationship_regression_REL(df, std_pheno=True):
+    # remove no relationship information pairs
+    df = df.dropna()
+    
     # unique id set
     df = tools.remove_duplicate_relpair(df, ["volid", "relid"])
     
@@ -114,7 +117,7 @@ def familial_relationship_regression_REL(df, std_pheno=True):
     
     # regression by each REL
     df_frreg = pd.DataFrame(
-        columns=["DOR", "relationship", "sex_type", "slope", "se", "p", "n"]
+        columns=["DOR", "relationship", "sex_type", "Erx", "slope", "se", "p", "n"]
         )
     
     for d in sorted(df["DOR"].unique()):
@@ -125,6 +128,7 @@ def familial_relationship_regression_REL(df, std_pheno=True):
             sex_type = (df_rel[["volsex", "relsex"]]
                         .apply(lambda x: "".join(map(str, sorted(x))), axis=1)
                         .unique()[0])
+            Erx = df_rel["Erx"].unique()[0]
             
             if len(df_rel) < 10: # < 5 relative pairs
                 continue
@@ -136,7 +140,7 @@ def familial_relationship_regression_REL(df, std_pheno=True):
             formula = "volpheno ~ 0 + relpheno"
             ll = smf.ols(formula, data=df_rel).fit()
             
-            df_frreg.loc[len(df_frreg)] = [d, rel, sex_type,
+            df_frreg.loc[len(df_frreg)] = [d, rel, sex_type, Erx,
                                            ll.params[0], 
                                            ll.bse[0], 
                                            ll.pvalues[0], 

@@ -139,7 +139,7 @@ def resampleFrregCoefficients(df_frreg, n_resample=100):
     df_resample = pd.DataFrame(columns=["DOR", "idx", "slope"])
     
     for dor in df_frreg["DOR"].unique():
-        slope, se = df_frreg.loc[df_frreg["DOR"] == dor, ["slope", "se_slope"]].values[0]
+        slope, se = df_frreg.loc[df_frreg["DOR"] == dor, ["slope", "se"]].values[0]
             
         df_tmp = pd.DataFrame({"DOR": dor,
                                "idx": range(n_resample),

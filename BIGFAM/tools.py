@@ -78,3 +78,43 @@ def flip_and_concat(df: pd.DataFrame, flip_colns: dict):
     df_flipped = df.copy().rename(columns=flip_colns)
     
     return pd.concat([df_original, df_flipped], axis=0)
+
+def long2wide(df_long):
+    dfs = []
+    params = df_long["param"].unique()
+    for param in params:
+        tmp_wide = (df_long
+                     .loc[df_long["param"] == param, ["median", "lower(2.5%)", "upper(97.5%)"]]
+                     .reset_index(drop=True))
+        tmp_wide.columns = [param, f"lower_{param}", f"upper_{param}"]
+        dfs += [tmp_wide]
+    
+    # concat
+    df_wide = pd.DataFrame()
+    for df_param in dfs:
+        df_wide = pd.concat([df_wide, df_param], axis=1)
+    return df_wide
+
+def wide2long(df_wide, params):
+    df_long = pd.DataFrame(columns=["param", "median", "lower(2.5%)", "upper(97.5%)"])
+    
+    for param in params:
+        coln = [f"{param}", f"lower_{param}", f"upper_{param}"]
+        tmp = df_wide[coln].copy()
+        tmp.columns = ["median", "lower(2.5%)", "upper(97.5%)"]
+        tmp["param"] = param
+        df_long = pd.concat([df_long, tmp], axis=0)
+    
+    return df_long.reset_index(drop=True)
+
+def raw2long(df_raw, params):
+    df_long = pd.DataFrame(columns=["param", "median", "lower(2.5%)", "upper(97.5%)"])
+    
+    for param in params:
+        estimates = df_raw[param]
+        median = np.median(estimates)
+        lower = np.percentile(estimates, 2.5)
+        upper = np.percentile(estimates, 97.5)
+        df_long.loc[len(df_long)] = [param, median, lower, upper]
+    
+    return df_long
