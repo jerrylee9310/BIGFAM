@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
-from BIGFAM import tools
+from . import tools
+# import .tools as tools #from BIGFAM import tools
 
 def rename_id(df, before_after={}):
     
@@ -29,6 +30,20 @@ def warning_conditions(df_frreg):
     #             warning_messages += [msg]
         
     return warning_messages
+  
+def get_sextype(df):
+    return (df[["volsex", "relsex"]]
+            .apply(lambda x: "".join(map(str, sorted(x))), axis=1))
+
+def remove_outliers(df, coln, verbose=False):
+    less = -3 * np.std(df[coln])
+    more = 3 * np.std(df[coln])
+    outliers = (df[coln] < less) | (df[coln] > more)
+    
+    if verbose:
+        print(sum(outliers), "removed from", len(df), flush=True)
+        
+    return df[~outliers].copy().reset_index(drop=True)
     
 def merge_pheno_info(df_pheno, df_info):
     # validate input
@@ -100,7 +115,7 @@ def familial_relationship_regression_DOR(df, std_pheno=True):
     return df_frreg, msgs
 
 
-def familial_relationship_regression_REL(df, std_pheno=True):
+def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=100):
     # remove no relationship information pairs
     df = df.dropna()
     
@@ -130,7 +145,7 @@ def familial_relationship_regression_REL(df, std_pheno=True):
                         .unique()[0])
             Erx = df_rel["Erx"].unique()[0]
             
-            if len(df_rel) < 10: # < 5 relative pairs
+            if len(df_rel) < thred_pair: # < 5 relative pairs
                 continue
             
             if std_pheno:

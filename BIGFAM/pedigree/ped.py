@@ -6,8 +6,10 @@ import numpy as np
 import pandas as pd
 from itertools import combinations
 import copy
-from BIGFAM import tools
-from BIGFAM.pedigree import dfs
+from .. import tools
+from . import dfs
+# from BIGFAM import tools
+# from BIGFAM.pedigree import dfs
 import importlib
 importlib.reload(dfs)
 

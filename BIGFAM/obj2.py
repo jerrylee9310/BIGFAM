@@ -79,10 +79,10 @@ def _lossFuncX(x, df, alpha):
 def _lossFuncXmXf(xs, df_alpha):
     x_male, x_female = xs
     df, alpha = df_alpha
-    
-    df_mm = df[df["sex_type"] == "mm"]
-    df_mf = df[df["sex_type"] == "mf"]
-    df_ff = df[df["sex_type"] == "ff"]
+        
+    df_mm = df[df["sex_type"] == "MM"]
+    df_mf = df[df["sex_type"] == "MF"]
+    df_ff = df[df["sex_type"] == "FF"]
     
     # fidelity term
     loss_mm = np.sum((df_mm["residual"] - df_mm["tl"] * x_male)**2)
@@ -94,23 +94,23 @@ def _lossFuncXmXf(xs, df_alpha):
     
     return loss_mm + loss_mf + loss_ff + loss_l2
 
-def _lossFuncXmXfR(xs, df_alpha):
-    x_male, x_female = xs
-    df, alpha, r = df_alpha
+# def _lossFuncXmXfR(xs, df_alpha):
+#     x_male, x_female = xs
+#     df, alpha, r = df_alpha
     
-    df_mm = df[df["sex_type"] == "mm"]
-    df_mf = df[df["sex_type"] == "mf"]
-    df_ff = df[df["sex_type"] == "ff"]
+#     df_mm = df[df["sex_type"] == "mm"]
+#     df_mf = df[df["sex_type"] == "mf"]
+#     df_ff = df[df["sex_type"] == "ff"]
     
-    # fidelity term
-    loss_mm = np.sum((df_mm["residual"] - df_mm["tl"] * x_male)**2)
-    loss_mf = np.sum((df_mf["residual"] - df_mf["tl"] * r * np.sqrt((x_male * x_female)))**2)
-    loss_ff = np.sum((df_ff["residual"] - df_ff["tl"] * x_female)**2)
+#     # fidelity term
+#     loss_mm = np.sum((df_mm["residual"] - df_mm["tl"] * x_male)**2)
+#     loss_mf = np.sum((df_mf["residual"] - df_mf["tl"] * r * np.sqrt((x_male * x_female)))**2)
+#     loss_ff = np.sum((df_ff["residual"] - df_ff["tl"] * x_female)**2)
     
-    # L2 term
-    loss_l2 = alpha * (x_male**2 + x_female**2)
+#     # L2 term
+#     loss_l2 = alpha * (x_male**2 + x_female**2)
     
-    return loss_mm + loss_mf + loss_ff + loss_l2
+#     return loss_mm + loss_mf + loss_ff + loss_l2
 
 
 def _optToFindX(df_block, alpha, lower_lim=-1, upper_lim=1):
@@ -143,19 +143,19 @@ def _optToFindXmXf(df_block, alpha, lower_lim=1e-6, upper_lim=1):
 
     return MODEL
 
-def _optToFindXmXfR(df_block, alpha, r0, lower_lim=1e-6, upper_lim=1):
-    # optimization
-    x0 = [0.01, 0.01] # Xmale, Xfemale
-    bnds = [(lower_lim, upper_lim), (lower_lim, upper_lim)] # [(1e-6, 1)]
+# def _optToFindXmXfR(df_block, alpha, r0, lower_lim=1e-6, upper_lim=1):
+#     # optimization
+#     x0 = [0.01, 0.01] # Xmale, Xfemale
+#     bnds = [(lower_lim, upper_lim), (lower_lim, upper_lim)] # [(1e-6, 1)]
     
-    MODEL = minimize(
-        fun=_lossFuncXmXfR,
-        x0=x0,
-        args=[df_block, alpha, r0],
-        bounds=bnds,
-        tol=1e-6
-    )
-    return MODEL
+#     MODEL = minimize(
+#         fun=_lossFuncXmXfR,
+#         x0=x0,
+#         args=[df_block, alpha, r0],
+#         bounds=bnds,
+#         tol=1e-6
+#     )
+#     return MODEL
 
 ########
 
@@ -227,34 +227,34 @@ def estimateXmXf(df_frreg,
     return df_raw
 
     
-def estimateXmXfR(df_frreg, 
-                 n_resample=100,
-                 alpha_dicts={"type": "eta", "weight":-2},
-                 regout_bin=["DOR", "sex_type"]):
-    df_frreg = _matchType(df_frreg)
-    df_lmbds = _resamplingFRregCoefficients(df_frreg, n_resample=n_resample)
+# def estimateXmXfR(df_frreg, 
+#                  n_resample=100,
+#                  alpha_dicts={"type": "eta", "weight":-2},
+#                  regout_bin=["DOR", "sex_type"]):
+#     df_frreg = _matchType(df_frreg)
+#     df_lmbds = _resamplingFRregCoefficients(df_frreg, n_resample=n_resample)
     
-    df_raw = pd.DataFrame(columns=["block_idx", "eta", "alpha", "Xmale", "Xfemale", "r", "func_val"])
+#     df_raw = pd.DataFrame(columns=["block_idx", "eta", "alpha", "Xmale", "Xfemale", "r", "func_val"])
     
-    for ib in range(n_resample):
-        df_block = df_lmbds[df_lmbds["block"] == ib].copy()
-        # compute FRresidual & eta
-        df_block = _regressOutMean(df_block, bin=regout_bin)
+#     for ib in range(n_resample):
+#         df_block = df_lmbds[df_lmbds["block"] == ib].copy()
+#         # compute FRresidual & eta
+#         df_block = _regressOutMean(df_block, bin=regout_bin)
         
-        # L2 weight value
-        mean_eta = df_block["eta"].mean()
-        if alpha_dicts["type"] == "eta":
-            alpha = mean_eta**alpha_dicts["weight"]
-        else:
-            alpha = alpha_dicts["weight"]
+#         # L2 weight value
+#         mean_eta = df_block["eta"].mean()
+#         if alpha_dicts["type"] == "eta":
+#             alpha = mean_eta**alpha_dicts["weight"]
+#         else:
+#             alpha = alpha_dicts["weight"]
         
-        if alpha < 0:
-            print("L2 weight is negative...", flush=True)
-            continue
+#         if alpha < 0:
+#             print("L2 weight is negative...", flush=True)
+#             continue
         
-        # estimate X
-        for r0 in np.linspace(-1, 1, 11):
-            MODEL = _optToFindXmXfR(df_block, alpha, r0)
-            df_raw.loc[len(df_raw)] = [ib, mean_eta, alpha, MODEL.x[0], MODEL.x[1], r0, MODEL.fun]
+#         # estimate X
+#         for r0 in np.linspace(-1, 1, 11):
+#             MODEL = _optToFindXmXfR(df_block, alpha, r0)
+#             df_raw.loc[len(df_raw)] = [ib, mean_eta, alpha, MODEL.x[0], MODEL.x[1], r0, MODEL.fun]
 
-    return df_raw
+#     return df_raw
