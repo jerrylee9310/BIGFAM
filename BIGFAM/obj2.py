@@ -67,6 +67,32 @@ def _regressOutMean(df_block, bin=["DOR"]):
 
     return df_res
 
+def _get_h2(df_frreg):
+    """Get meta-h2"""
+    
+    def meta_h2(means, ses):
+        """IVW"""
+        ses = np.array(ses)
+        means = np.array(means)
+        meta_se = np.sqrt(1/np.sum(1/ses**2))
+        meta_mean = np.sum(means/ses**2) * (meta_se**2)
+        
+        return meta_mean, meta_se
+    
+    means = []
+    ses = []
+    
+    for d in sorted(df_frreg["DOR"].unique()):
+        means_d = df_frreg.loc[df_frreg["DOR"] == d, "slope"].to_numpy()
+        ses_d = df_frreg.loc[df_frreg["DOR"] == d, "se"].to_numpy()
+        mean_d, se_d = meta_h2(2**d * means_d, 2**d * ses_d)
+        means.append(mean_d)
+        ses.append(se_d)
+    
+    return meta_h2(means, ses)
+        
+
+
 def _lossFuncX(x, df, alpha):
     # Fidelity term
     loss_fid = np.sum((df["residual"] - df["tl"] * x) ** 2)
@@ -170,6 +196,8 @@ def estimateX(df_frreg,
 
     """
     df_frreg = _matchType(df_frreg)
+    mean_eta, _ = _get_h2(df_frreg)
+    
     df_lmbds = _resamplingFRregCoefficients(df_frreg, n_resample=n_resample)
     
     df_raw = pd.DataFrame(columns=["eta", "alpha", "X"])
@@ -179,9 +207,8 @@ def estimateX(df_frreg,
         df_block = _regressOutMean(df_block, bin=regout_bin)
         
         # L2 weight value
-        mean_eta = df_block["eta"].mean()
         if alpha_dicts["type"] == "eta":
-            alpha = float(mean_eta)**float(alpha_dicts["weight"])
+            alpha = float(1/mean_eta)**float(alpha_dicts["weight"])
         else:
             alpha = alpha_dicts["weight"]
         
