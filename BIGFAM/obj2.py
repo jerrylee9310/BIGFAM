@@ -229,6 +229,7 @@ def estimateXmXf(df_frreg,
                  regout_bin=["DOR", "sex_type"]):
     df_frreg = _matchType(df_frreg)
     df_lmbds = _resamplingFRregCoefficients(df_frreg, n_resample=n_resample)
+    mean_eta, _ = _get_h2(df_frreg)
     
     df_raw = pd.DataFrame(columns=["eta", "alpha", "Xmale", "Xfemale"])
     for ib in range(n_resample):
@@ -237,9 +238,9 @@ def estimateXmXf(df_frreg,
         df_block = _regressOutMean(df_block, bin=regout_bin)
         
         # L2 weight value
-        mean_eta = df_block["eta"].mean()
+        # mean_eta = df_block["eta"].mean()
         if alpha_dicts["type"] == "eta":
-            alpha = mean_eta**alpha_dicts["weight"]
+            alpha = float(1/mean_eta)**alpha_dicts["weight"]
         else:
             alpha = alpha_dicts["weight"]
         

@@ -68,8 +68,21 @@ def merge_pheno_info(df_pheno, df_info):
     
     return df_merge
 
+def removing_outlier(df, coln, thred=3):
+    mean = np.mean(df[coln])
+    sd = np.std(df[coln])
+    
+    return (df[(df[coln] < mean + thred*sd) & (df[coln] > mean - thred*sd)]
+            .reset_index(drop=True))
+    
 
-def familial_relationship_regression_DOR(df, std_pheno=True):
+def familial_relationship_regression_DOR(
+    df, 
+    thred_pair=100, 
+    std_pheno=True, 
+    remove_outlier=True
+    ):
+    
     # unique id set
     df = tools.remove_duplicate_relpair(df, ["volid", "relid"])
     
@@ -87,9 +100,22 @@ def familial_relationship_regression_DOR(df, std_pheno=True):
     for d in sorted(df["DOR"].unique()):
         df_dor = df[df["DOR"] == d].copy()
         
-        if std_pheno:
+        if len(df_dor) < thred_pair: # < 5 relative pairs
+            raise Exception("Too small pairs..")
+            
+        if std_pheno & remove_outlier:
             df_dor["volpheno"] = std_col(df_dor["volpheno"])
             df_dor["relpheno"] = std_col(df_dor["relpheno"])
+            df_dor = removing_outlier(df_dor, "volpheno")
+            
+        else:
+            if std_pheno:
+                df_dor["volpheno"] = std_col(df_dor["volpheno"])
+                df_dor["relpheno"] = std_col(df_dor["relpheno"])
+            if remove_outlier:
+                df_dor = removing_outlier(df_dor, "volpheno")
+        
+        
         
         formula = "volpheno ~ 0 + relpheno"
         ll = smf.ols(formula, data=df_dor).fit()

@@ -21,7 +21,7 @@ dict_rel_rx = {
     "daughter_father": ["DF", 1/np.sqrt(2)],
     "daughter_mother": ["DM", 1/2],
     "son_brother": ["SB", 1/2],
-    "son_sister": ["SS_DB", 1/np.sqrt(8)],
+    "son_sister": ["SS+DB", 1/np.sqrt(8)],
     "daughter_sister": ["DS", 3/4],
 }
 
