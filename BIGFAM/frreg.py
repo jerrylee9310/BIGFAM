@@ -141,7 +141,7 @@ def familial_relationship_regression_DOR(
     return df_frreg, msgs
 
 
-def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=100):
+def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=200):
     # remove no relationship information pairs
     df = df.dropna()
     
@@ -171,7 +171,7 @@ def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=100):
                         .unique()[0])
             Erx = df_rel["Erx"].unique()[0]
             
-            if len(df_rel) < thred_pair: # < 5 relative pairs
+            if len(df_rel) < thred_pair: # < 100 relative pairs
                 continue
             
             if std_pheno:
