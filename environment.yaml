@@ -1,5 +1,6 @@
 name: BIGFAM
 channels:
+  - anaconda
   - conda-forge
   - http://statgen.org/wp-content/uploads/Softwares/pyplink
   - defaults
@@ -10,14 +11,18 @@ dependencies:
   - backcall=0.2.0=pyh9f0ad1d_0
   - blas=1.0=mkl
   - bokeh=2.4.3=pyhd8ed1ab_3
+  - brotli=1.0.9=h5eee18b_8
+  - brotli-bin=1.0.9=h5eee18b_8
   - brotli-python=1.0.9=py39h5a03fae_7
   - bzip2=1.0.8=h5eee18b_5
-  - ca-certificates=2024.2.2=hbcca054_0
+  - ca-certificates=2024.3.11=h06a4308_0
   - cffi=1.16.0=py39h5eee18b_0
   - click=8.1.7=unix_pyh707e725_0
   - cloudpickle=3.0.0=pyhd8ed1ab_0
   - colorama=0.4.6=pyhd8ed1ab_0
   - comm=0.2.2=pyhd8ed1ab_0
+  - contourpy=1.2.0=py39hdb19cb5_0
+  - cycler=0.11.0=pyhd3eb1b0_0
   - cytoolz=0.12.2=py39h5eee18b_0
   - dask=2023.4.1=py39h06a4308_1
   - dask-core=2023.4.1=py39h06a4308_0
@@ -28,10 +33,12 @@ dependencies:
   - exceptiongroup=1.2.0=pyhd8ed1ab_2
   - executing=2.0.1=pyhd8ed1ab_0
   - expat=2.6.2=h6a678d5_0
+  - fonttools=4.51.0=py39h5eee18b_0
   - freetype=2.10.4=h0708190_1
   - fsspec=2024.3.1=pyhca7485f_0
   - importlib-metadata=7.1.0=pyha770c72_0
   - importlib_metadata=7.1.0=hd8ed1ab_0
+  - importlib_resources=6.1.1=py39h06a4308_1
   - iniconfig=2.0.0=pyhd8ed1ab_0
   - intel-openmp=2023.1.0=hdb19cb5_46306
   - ipykernel=6.29.3=pyhd33586a_0
@@ -41,9 +48,13 @@ dependencies:
   - jpeg=9e=h166bdaf_1
   - jupyter_client=8.6.1=pyhd8ed1ab_0
   - jupyter_core=5.7.2=py39hf3d152e_0
+  - kiwisolver=1.4.4=py39h6a678d5_0
   - lcms2=2.12=h3be6417_0
   - ld_impl_linux-64=2.38=h1181459_1
   - lerc=3.0=h295c915_0
+  - libbrotlicommon=1.0.9=h5eee18b_8
+  - libbrotlidec=1.0.9=h5eee18b_8
+  - libbrotlienc=1.0.9=h5eee18b_8
   - libdeflate=1.17=h5eee18b_1
   - libffi=3.4.4=h6a678d5_0
   - libgcc-ng=11.2.0=h1234567_1
@@ -59,6 +70,7 @@ dependencies:
   - locket=1.0.0=pyhd8ed1ab_0
   - lz4-c=1.9.4=h6a678d5_0
   - markupsafe=1.1.1=py39h3811e60_3
+  - matplotlib-base=3.8.4=py39h1128e8f_0
   - matplotlib-inline=0.1.7=pyhd8ed1ab_0
   - mkl=2023.1.0=h213fc3f_46344
   - mkl-service=2.4.0=py39h5eee18b_1
@@ -90,6 +102,7 @@ dependencies:
   - pure_eval=0.2.2=pyhd8ed1ab_0
   - pycparser=2.22=pyhd8ed1ab_0
   - pygments=2.17.2=pyhd8ed1ab_0
+  - pyparsing=3.0.9=py39h06a4308_0
   - pysocks=1.7.1=pyha2e5f31_6
   - pytest=8.1.1=pyhd8ed1ab_0
   - python=3.9.19=h955ad1f_0
@@ -101,6 +114,7 @@ dependencies:
   - pyzmq=25.1.2=py39h6a678d5_0
   - readline=8.2=h5eee18b_0
   - scipy=1.12.0=py39h5f9d8c6_0
+  - seaborn=0.12.2=py39h06a4308_0
   - setuptools=59.8.0=py39hf3d152e_1
   - six=1.16.0=pyh6c4a22f_0
   - sortedcontainers=2.4.0=pyhd8ed1ab_0
@@ -117,6 +131,7 @@ dependencies:
   - traitlets=5.14.3=pyhd8ed1ab_0
   - typing_extensions=4.11.0=pyha770c72_0
   - tzdata=2024a=h04d1e81_0
+  - unicodedata2=15.1.0=py39h5eee18b_0
   - urllib3=2.2.1=pyhd8ed1ab_0
   - wcwidth=0.2.13=pyhd8ed1ab_0
   - wheel=0.43.0=pyhd8ed1ab_1
