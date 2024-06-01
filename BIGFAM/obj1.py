@@ -171,10 +171,14 @@ def familialRelationshipLogRegression(df_lmbds):
     # return df_frlogreg
     return df_frlog
      
-def prediction(df_lmbds, frlogreg_sig, 
-                   n_repeat_cv=10, n_block=10, 
-                   step_size=0.01, 
-                   print_prog=False):
+def prediction(
+    df_lmbds, 
+    frlogreg_sig, 
+    n_repeat_cv=10, 
+    n_block=10, 
+    step_size=0.01, 
+    print_prog=False
+    ):
     df_res = pd.DataFrame()
     df_lmbds = df_lmbds.astype({"DOR": int,
                                 "idx":int,
@@ -202,4 +206,68 @@ def prediction(df_lmbds, frlogreg_sig,
             
     return df_res
             
+def obj1(
+    df_frreg,
+    n_resample=100,
+    n_repeat_cv=10, 
+    n_block=10, 
+    step_size=0.01, 
+    print_prog=True,
+    ):
+    # resampling FR-reg to compute CIs
+    df_lmbds = resampleFrregCoefficients(
+        df_frreg, 
+        n_resample=n_resample
+    )    
     
+    # slope test(FRLog-reg)
+    df_frlogreg = familialRelationshipLogRegression(df_lmbds)
+    sig = _slopeSig(df_frlogreg["slope"])
+    
+    print("""
+          Slope Test Result : {sig} (slope is {median:.3f}({lower:.3f}, {upper:.3f}))
+          """.format(
+              sig = sig,
+              median = np.median(df_frlogreg["slope"]),
+              lower = np.percentile(df_frlogreg["slope"], 2.5),
+              upper = np.percentile(df_frlogreg["slope"], 97.5),
+          ),
+          flush=True
+          )
+    
+    print("""
+          Predict Variance Components...
+          """,
+          flush=True
+          )
+    
+    # prediction
+    df_gsw = prediction(
+        df_lmbds, 
+        sig, 
+        n_repeat_cv=n_repeat_cv, 
+        n_block=n_block, 
+        step_size=step_size, 
+        print_prog=print_prog
+        )
+    
+    print("""
+          Prediction Result : 
+          - Vg : {g:.3f}({g_lower:.3f},{g_upper:.3f})
+          - Vs : {s:.3f}({s_lower:.3f},{s_upper:.3f})
+          - ws : {w:.3f}({w_lower:.3f},{w_upper:.3f})
+          """.format(
+              g = np.median(df_gsw["V(g)"]),
+              g_lower = np.percentile(df_gsw["V(g)"], 2.5),
+              g_upper = np.percentile(df_gsw["V(g)"], 97.5),
+              s = np.median(df_gsw["V(s)"]),
+              s_lower = np.percentile(df_gsw["V(s)"], 2.5),
+              s_upper = np.percentile(df_gsw["V(s)"], 97.5),
+              w = 1 / np.median(df_gsw["w"]),
+              w_lower = 1 / np.percentile(df_gsw["w"], 2.5),
+              w_upper = 1 / np.percentile(df_gsw["w"], 97.5),
+          ),
+          flush=True
+          )
+    
+    return df_frlogreg, df_gsw

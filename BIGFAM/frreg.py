@@ -141,7 +141,12 @@ def familial_relationship_regression_DOR(
     return df_frreg, msgs
 
 
-def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=200):
+def familial_relationship_regression_REL(
+    df, 
+    thred_pair=200,
+    std_pheno=True, 
+    remove_outlier=True
+    ):
     # remove no relationship information pairs
     df = df.dropna()
     
@@ -174,10 +179,18 @@ def familial_relationship_regression_REL(df, std_pheno=True, thred_pair=200):
             if len(df_rel) < thred_pair: # < 100 relative pairs
                 continue
             
-            if std_pheno:
-                df_rel["volpheno"] = std_col(df_rel["volpheno"])
-                df_rel["relpheno"] = std_col(df_rel["relpheno"])
-        
+            if std_pheno & remove_outlier:
+                df_dor["volpheno"] = std_col(df_dor["volpheno"])
+                df_dor["relpheno"] = std_col(df_dor["relpheno"])
+                df_dor = removing_outlier(df_dor, "volpheno")
+            
+            else:
+                if std_pheno:
+                    df_dor["volpheno"] = std_col(df_dor["volpheno"])
+                    df_dor["relpheno"] = std_col(df_dor["relpheno"])
+                if remove_outlier:
+                    df_dor = removing_outlier(df_dor, "volpheno")
+            
             formula = "volpheno ~ 0 + relpheno"
             ll = smf.ols(formula, data=df_rel).fit()
             

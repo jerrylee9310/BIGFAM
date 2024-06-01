@@ -1,5 +1,4 @@
 data
-tmp/
-test/
-figures/
-tables/
+tmp
+figures
+tables

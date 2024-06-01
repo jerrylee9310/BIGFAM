@@ -140,6 +140,17 @@ def estimateX(
         MODEL = Xoptim.optToFindX(df_block, alpha)
         df_raw.loc[len(df_raw)] = [meta_lambda, alpha, MODEL.x[0]]
 
+    print("""
+          Prediction Result : 
+          - Vx : {x:.3f}({x_lower:.3f},{x_upper:.3f})
+          """.format(
+              x = np.median(df_raw["X"]),
+              x_lower = np.percentile(df_raw["X"], 2.5),
+              x_upper = np.percentile(df_raw["X"], 97.5),
+          ),
+          flush=True
+          )
+    
     return df_raw
 
     
@@ -235,4 +246,23 @@ def estimateXmXfR(
             tmp_min["r"].values[0]
         ]
 
+    print("""
+          Prediction Result : 
+          - Vx_male : {Xmale:.3f}({Xmale_lower:.3f},{Xmale_upper:.3f})
+          - Vx_female : {Xfemale:.3f}({Xfemale_lower:.3f},{Xfemale_upper:.3f})
+          - r : {r:.3f}({r_lower:.3f},{r_upper:.3f})
+          """.format(
+              Xmale = np.median(df_raw["Xmale"]),
+              Xmale_lower = np.percentile(df_raw["Xmale"], 2.5),
+              Xmale_upper = np.percentile(df_raw["Xmale"], 97.5),
+              Xfemale = np.median(df_raw["Xfemale"]),
+              Xfemale_lower = np.percentile(df_raw["Xfemale"], 2.5),
+              Xfemale_upper = np.percentile(df_raw["Xfemale"], 97.5),
+              r = np.median(df_raw["r"]),
+              r_lower = np.percentile(df_raw["r"], 2.5),
+              r_upper = np.percentile(df_raw["r"], 97.5),
+          ),
+          flush=True
+          )
+    
     return df_raw.reset_index(drop=True)
