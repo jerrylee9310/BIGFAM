@@ -1,7 +1,5 @@
 # BIGFAM
 
-
-# X-CHROM
 <p align="center">
 <img src="Fig1.png">
 <!-- width="800" height="180"/></p> -->
