@@ -7,7 +7,7 @@
 
 ## Introduction
 
-X-CHROM is a model that estimates heritability using relatives phenotype without genotype.
+BIGFAM is a model that estimates heritability using relatives phenotype without genotype.
 This model does not require genotype information and uses only phenotype and familial relationship data as input.
 
 ## Software requirements
@@ -18,7 +18,6 @@ The package has been tested on the following systems:
 
 - macOS: Ventura v.13.0.1
 - Linux: CentOS v.7
-
 
 ### Python Dependencies
 
@@ -31,17 +30,16 @@ The installation process takes a few seconds, including downloading test data.
 
 ```
 git clone https://github.com/jerrylee9310/BIGFAM
-cd BIGFAM
 ```
 
 ## Usage
 
-X-CHROM requires two types of input:
+BIGFAM requires two types of input:
 
 1. Phenotype data, which consists of three columns (ID, ID, phenotype). Check the example format in `./test-data/test.phen`.
 2. Relationship information data, which consists of two columns (ID1, ID2) representing pairs of individuals with specific familial relationships. Check the example format in `./test-data/test.info`.
 
-X-CHROM can be run using the following Python code:
+BIGFAM can be run using the following Python code:
 
 ```python
 from BIGFAM import obj1, obj2
