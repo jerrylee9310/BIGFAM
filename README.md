@@ -1,7 +1,7 @@
 # BIGFAM
 
 <p align="center">
-<img src="./notebook/Fig1.png">
+<img src="figures/Fig1.png">
 <!-- width="800" height="180"/></p> -->
 <!-- ![Method overview](./pic/test1.png){: width="100%" height="100%"} -->
 
